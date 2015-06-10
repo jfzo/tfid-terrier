@@ -33,7 +33,7 @@ The two inner pipeline classes perform the same action as their corresponding si
 The list of term sequences written in the output file will be later employed by the _docgraph_ utils to build the biterm-nets and degrees files. In order to prefer this indexer instead of the default one, the option **-Dtrec.indexer.class= BasicIndexerAndTermSequencer** must be used when indexing, i.e. the following command should be executed:
 
 ```
-$bin/bin/trec_terrier.sh -i -Dtrec.indexer.class= BasicIndexerAndTermSequencer
+$ bin/bin/trec_terrier.sh -i -Dtrec.indexer.class=BasicIndexerAndTermSequencer
 ```
 The output of the previous command will be in first place an index (see _./var/index_ folder) and a file named term_sequence.csv which will contain in each line the term sequence corresponding to a document. The first field in each line denotes the documento name.
 
@@ -61,5 +61,5 @@ $ ant jar
 ```
 The classpath is automatically pointed to the _lib_ directory. A file named _TFID.jar_ will be generated into the _lib_ directory. Finally, copy this jar file into Terrier's _lib_ directory.
 
-### Using with Terrier
+#### Using with Terrier
 You need Terrier 4.0 installed and with the _TFID.jar_ file already in its _lib_ directory. Now Terrier can be run as usually following the running instructions of the previous part of this document.
