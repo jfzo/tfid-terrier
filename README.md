@@ -53,7 +53,7 @@ _The indexed degree value was artificially increased in one unit because it is u
 $ bin/trec_terrier.sh -i -Dtrec.indexer.class=BasicIndexerForDegrees -Dtrec.document.class=org.terrier.indexing.DegreesDocument -Dtrec.collection.class=DegreeByDocCollection -Dsinglefile.path=biterm_degrees_bydoc.csv
 ```
 
-#### Compilation instructions
+### Compilation instructions
 
 *First* you need [Apache-ant](http://ant.apache.org/) and all the libraries of terrier into the **lib** directory. *Then* execute:
 ````
