@@ -12,14 +12,17 @@ package org.terrier.matching.models;
 public class TWID extends WeightingModel {
 	private static final long serialVersionUID = 1L;
 	
+	/** The constant k_1.*/
+	private double k_1 = 1.2d;
+	
+
 	/** The parameter b.*/
-	private double b;
+	private double b=0.003d;
 
 	
 	/** A default constructor.*/
 	public TWID() {
 		super();
-		b=0.003d;
 	}
 	
 	/**
@@ -33,6 +36,8 @@ public class TWID extends WeightingModel {
 
 	/**
 	 * Uses TWID to compute a weight for a term in a document.
+	 * Recall that tf must be decreased in one unit, since because
+	 * feasibility issues, this value was increased in the indexing stage.
 	 * @param tf The term frequency in the document
 	 * @param docLength the document's length
 	 * @return the score assigned to a document with the given 
@@ -41,9 +46,15 @@ public class TWID extends WeightingModel {
 	@Override
 	public double score(double tf, double docLength) {
 
-		double tw = tf / (1-b+b*docLength/averageDocumentLength);
-		double idf = WeightingModelLibrary.log( (numberOfDocuments+1) / documentFrequency );
+		/*
+		double tw = (tf - 1) / (1-b+b*docLength/averageDocumentLength);
+		double idf = WeightingModelLibrary.log( (numberOfDocuments+1) / documentFrequency+1 );
 		return tw*idf;
+		*/
+		
+		double Robertson_tf = k_1*tf/(tf+k_1*(1-b+b*docLength/averageDocumentLength));
+		double idf = WeightingModelLibrary.log(numberOfDocuments/documentFrequency+1);
+		return keyFrequency * Robertson_tf * idf;
 		
 	}
 
