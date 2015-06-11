@@ -88,6 +88,7 @@ public class IndexExplorer {
 				.getPostings((BitIndexPointer) doi.getDocumentEntry(docid));
 		String docno = meta.getItem("docno", docid);
 		System.out.println("DOC: " + docno);
+				
 		while (postings.next() != IterablePosting.EOL) {
 			Map.Entry<String, LexiconEntry> lee = lex.getLexiconEntry(postings
 					.getId());

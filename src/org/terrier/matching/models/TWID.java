@@ -53,7 +53,7 @@ public class TWID extends WeightingModel {
 		*/
 		if(tf > 1){
 			tf = tf - 1;
-			double Robertson_tf = k_1*tf/(tf+k_1*(1-b+b*docLength/averageDocumentLength));
+			double Robertson_tf = k_1*tf/( tf+k_1*(1-b+b*docLength/averageDocumentLength) );
 			double idf = WeightingModelLibrary.log(numberOfDocuments/documentFrequency+1);
 			return keyFrequency * Robertson_tf * idf;
 		}else{

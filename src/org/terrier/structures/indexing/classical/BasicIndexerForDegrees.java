@@ -32,11 +32,11 @@ import org.terrier.utility.ApplicationSetup;
 import org.terrier.utility.FieldScore;
 import org.terrier.utility.TermCodes;
 
-
 /**
- * Extends the indexer class in order to replace term frequencies within each document
- * with their corresponding in/out degrees.
- * NOTE: The document class employed must be @DegreesDocument
+ * Extends the indexer class in order to replace term frequencies within each
+ * document with their corresponding in/out degrees. NOTE: The document class
+ * employed must be @DegreesDocument
+ * 
  * @author jz
  *
  */
@@ -138,7 +138,7 @@ public class BasicIndexerForDegrees extends Indexer {
 
 				// get each term in the document
 				while (!doc.endOfDocument()) {
-					//logger.info("Re-writting term weights for document "+doc.getProperty("docno"));
+					// logger.info("Re-writting term weights for document "+doc.getProperty("docno"));
 					if ((term = doc.getNextTerm()) != null && !term.equals("")) {
 
 						int deg = ((DegreesDocument) doc)
@@ -150,10 +150,10 @@ public class BasicIndexerForDegrees extends Indexer {
 						// term);
 						/**
 						 * Sets as the degree + 1 to avoid zero valued weights.
-						 * The value can be zero, e.g. for the first time the in-degree and
-						 * the out-degree for the last term.
-						 * The ideal scenario would be to delete the posting, but as far
-						 * as I know this is not feasible.
+						 * The value can be zero, e.g. for the first time the
+						 * in-degree and the out-degree for the last term. The
+						 * ideal scenario would be to delete the posting, but as
+						 * far as I know this is not feasible.
 						 */
 						termsInDocument.insert(deg + 1, term);
 						numOfTokensInDocument++;
@@ -176,16 +176,11 @@ public class BasicIndexerForDegrees extends Indexer {
 				 * document tree
 				 */
 				try {
-					if (termsInDocument.getDocumentLength() == 0) { /*
-																	 * this
-																	 * document
-																	 * is empty,
-																	 * add the
-																	 * minimum
-																	 * to the
-																	 * document
-																	 * index
-																	 */
+					if (termsInDocument.getDocumentLength() == 0) {
+						/*
+						 * this document is empty, add the minimum to the
+						 * document index
+						 */
 						indexEmpty(doc.getAllProperties());
 					} else { /* index this docuent */
 						numberOfTokens += numOfTokensInDocument;
