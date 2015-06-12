@@ -64,6 +64,9 @@ public class BasicIndexerAndTermSequencer extends Indexer{
 				//add term to thingy tree
 				termsInDocument.insert(term);
 				numOfTokensInDocument++;
+				
+				// In case no stemmer is being used !
+				documentSequence.add(term);
 			}
 		}
 		
@@ -177,10 +180,14 @@ public class BasicIndexerAndTermSequencer extends Indexer{
 		
 		//Custom code
 		
+		/*
 		TermPipeline last = new BasicTermProcessor(); 
 		TermPipeline tmp1 = new PorterTermProcessor(last);	
 		TermPipeline tmp2 = new StopwordsTermProcessor(tmp1);
+		*/
 		
+		TermPipeline last = new BasicTermProcessor();
+		TermPipeline tmp2 = new StopwordsTermProcessor(last);
 		
 		
 		//custom_pipeline =  = new SkipTermPipeline(next, last);
