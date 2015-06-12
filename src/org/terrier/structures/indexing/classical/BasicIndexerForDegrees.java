@@ -3,6 +3,7 @@ package org.terrier.structures.indexing.classical;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Vector;
 
@@ -50,6 +51,7 @@ public class BasicIndexerForDegrees extends Indexer {
 	protected CompressionConfiguration compressionInvertedConfig;
 
 	protected DocumentPostingList termsInDocument;
+	//protected DocumentDegreePostingList termsInDocument;
 	protected int numOfTokensInDocument = 0;
 
 	public BasicIndexerForDegrees(String path, String prefix) {
@@ -137,8 +139,11 @@ public class BasicIndexerForDegrees extends Indexer {
 				numOfTokensInDocument = 0;
 
 				// get each term in the document
+				int totalLength = 0;
+				
 				while (!doc.endOfDocument()) {
 					// logger.info("Re-writting term weights for document "+doc.getProperty("docno"));
+					
 					if ((term = doc.getNextTerm()) != null && !term.equals("")) {
 
 						int deg = ((DegreesDocument) doc)
@@ -149,19 +154,45 @@ public class BasicIndexerForDegrees extends Indexer {
 						// (DegreesDocument)doc).getCurrentTermOutDegree(),
 						// term);
 						/**
-						 * Sets as the degree + 1 to avoid zero valued weights.
-						 * The value can be zero, e.g. for the first time the
-						 * in-degree and the out-degree for the last term. The
-						 * ideal scenario would be to delete the posting, but as
-						 * far as I know this is not feasible.
+						 * Terrier cannot index zero values.
+						 * Degree is increased in 1 to avoid zero valued weights.
+						 * (E.g. in-degree of first term)
+						 * 
+						 * Instead of calling 'insert'method directly once, the value
+						 * is accumulated so hence enabling a correct computation of
+						 * document length.
 						 */
 						termsInDocument.insert(deg + 1, term);
+						totalLength += deg;
 						numOfTokensInDocument++;
 
 					}
 					if (MAX_TOKENS_IN_DOCUMENT > 0
 							&& numOfTokensInDocument > MAX_TOKENS_IN_DOCUMENT)
 						break;
+				}
+
+				/**
+				 * Routine to modify the field documentLength (marked as protected).
+				 * Not advisable but it is better than modifying Terrier. 
+				 */
+				Class c = termsInDocument.getClass();
+				try {
+					Field fld = c.getDeclaredField("documentLength");
+					fld.setAccessible(true);
+					fld.setInt(termsInDocument, totalLength);
+				} catch (NoSuchFieldException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (SecurityException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalArgumentException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IllegalAccessException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 
 				// if we didn't index all tokens from document,
@@ -184,7 +215,7 @@ public class BasicIndexerForDegrees extends Indexer {
 						indexEmpty(doc.getAllProperties());
 					} else { /* index this docuent */
 						numberOfTokens += numOfTokensInDocument;
-						indexDocument(doc.getAllProperties(), termsInDocument);
+						indexDocument(doc.getAllProperties(), (DocumentPostingList)termsInDocument);
 					}
 				} catch (Exception ioe) {
 					logger.error("Failed to index " + doc.getProperty("docno"),
